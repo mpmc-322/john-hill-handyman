@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>John Hill Handyman Service — Brunswick, ME</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #0D0D0D; color: #F5F0E8; }
+    ::selection { background: #C9A227; color: #0D0D0D; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0D0D0D; }
+    ::-webkit-scrollbar-thumb { background: #C9A227; border-radius: 3px; }
+    input, select, textarea {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 15px;
+    }
+    input::placeholder, textarea::placeholder { color: #A09080; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const { useState, useEffect } = React;
+
+// ============ DESIGN TOKENS ============
+const C = {
+  black:       '#0D0D0D',
+  charcoal:    '#161616',
+  charcoalMid: '#1E1E1E',
+  charcoalLt:  '#272727',
+  gold:        '#C9A227',
+  goldLight:   '#E8C84A',
+  goldDark:    '#9A7A1A',
+  goldFaint:   'rgba(201,162,39,0.08)',
+  goldBorder:  'rgba(201,162,39,0.25)',
+  white:       '#FFFFFF',
+  cream:       '#F5F0E8',
+  borderDark:  'rgba(201,162,39,0.15)',
+  borderLight: '#DDD0B8',
+  textLight:   '#F5F0E8',
+  textMuted:   'rgba(245,240,232,0.55)',
+  textDark:    '#1A1A1A',
+  textMid:     '#4A4035',
+};
+
+const fonts = {
+  sans: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+};
+
+// ============ BUSINESS DATA ============
+const BIZ = {
+  name:     'John Hill Handyman Service',
+  short:    'John Hill Handyman',
+  tagline:  'Reliable · Honest · Quality Work',
+  about:    'John Hill Handyman Service is Brunswick\'s trusted choice for homeowners who want the job done right. John brings hands-on expertise to every project — from roof repairs and deck work to junk removal and painting. Locally owned, locally trusted, and built on a reputation for reliability and straight talk.',
+  phone:    '207-798-1969',
+  phonePlain: '2077981969',
+  email:    'john@johnhillhandyman.com',
+  location: 'Brunswick, ME',
+  facebook: 'https://www.facebook.com/profile.php?id=61583244435383',
+  logoPath: 'logo.jpg',
+  stats: [
+    { value: '3',    label: 'Years in Business' },
+    { value: '200+', label: 'Jobs Completed'    },
+    { value: '5 ★',  label: 'Avg. Rating'       },
+  ],
+  badges: [
+    { label: 'Licensed & Insured'      },
+    { label: 'Fast Turnaround'         },
+    { label: 'Satisfaction Guaranteed' },
+  ],
+};
+
+const PHOTOS = 'Photos/';
+
+const SERVICES = [
+  { name: 'Roofing',         desc: 'Repairs, patch jobs, and inspections to keep your roof tight and watertight year-round.',   photo: PHOTOS + 'roofing.jpg'   },
+  { name: 'Decks',           desc: 'Board replacement, structural repairs, staining, and new deck construction.',                photo: PHOTOS + 'deck.jpg'      },
+  { name: 'Painting',        desc: 'Interior and exterior painting — clean prep, straight lines, lasting finishes.',             photo: PHOTOS + 'landscape.jpg' },
+  { name: 'Junk Removal',    desc: 'Fast, affordable removal of unwanted items, debris, and clutter from any property.',         photo: PHOTOS + 'cleanout.jpg'  },
+  { name: 'Moving',          desc: 'Local moving assistance — loading, unloading, and furniture moving done safely.',            photo: PHOTOS + 'yard.jpg'      },
+  { name: 'Cleanouts',       desc: 'Full property cleanouts for homes, garages, storage units, and estates.',                   photo: PHOTOS + 'cleanout.jpg'  },
+  { name: 'Repairs',         desc: 'General repairs around the house — drywall, doors, windows, fixtures, and more.',           photo: PHOTOS + 'repairs.jpg'   },
+  { name: 'Carpentry',       desc: 'Trim work, shelving, framing, and custom wood repairs done with care.',                     photo: PHOTOS + 'drywall.jpg'   },
+  { name: 'And More',        desc: 'No job too small. If you need it done around the house, give John a call.',                 photo: PHOTOS + 'gutters.jpg'   },
+];
+
+const HOW_IT_WORKS = [
+  { step: '01', title: 'Call or Message Us',  desc: 'Reach out by phone, text, email, or Facebook and describe what needs doing. We respond fast.'  },
+  { step: '02', title: 'Get a Clear Quote',   desc: "We assess the job and give you a straight price — no hidden fees, no surprises."                },
+  { step: '03', title: 'Job Done Right',      desc: "We show up on time, do quality work, and leave the place clean when we're finished."            },
+];
+
+const TESTIMONIALS = [
+  {
+    quote: 'John showed up on time, gave us a straight price, and got the deck repaired in one afternoon. No upselling, no surprises. We\'ll call him again for sure.',
+    author: 'Mike R.',
+    location: 'Brunswick, ME',
+  },
+  {
+    quote: 'We called John for a roof patch and he had it done the same week. Really honest guy — told us exactly what needed fixing and what could wait. Appreciated the transparency.',
+    author: 'Sarah T.',
+    location: 'Topsham, ME',
+  },
+  {
+    quote: 'Hired John to help with a move and a full property cleanout. He works fast, takes care of your stuff, and the price was fair. Highly recommend for anyone in the midcoast area.',
+    author: 'Dave & Linda K.',
+    location: 'Bath, ME',
+  },
+];
+
+// ============ SHARED COMPONENTS ============
+
+function GoldBtn({ children, href, onClick, outline, small }) {
+  const [hov, setHov] = useState(false);
+  const s = {
+    display: 'inline-flex', alignItems: 'center', gap: 8,
+    padding: small ? '10px 22px' : '15px 32px',
+    borderRadius: 6,
+    fontFamily: fonts.sans, fontSize: small ? 13 : 15, fontWeight: 700,
+    cursor: 'pointer', textDecoration: 'none', letterSpacing: '0.02em',
+    transition: 'all 0.15s ease',
+    border: outline ? `2px solid ${C.gold}` : 'none',
+    background: outline ? (hov ? C.gold : 'transparent') : (hov ? C.goldLight : C.gold),
+    color: outline ? (hov ? C.black : C.gold) : C.black,
+    boxShadow: hov && !outline ? `0 4px 20px rgba(201,162,39,0.35)` : 'none',
+  };
+  const p = { style: s, onMouseEnter: () => setHov(true), onMouseLeave: () => setHov(false), onClick };
+  if (href) return <a href={href} {...p}>{children}</a>;
+  return <button {...p}>{children}</button>;
+}
+
+// Split Call / Text button
+function PhoneTextBtn({ small }) {
+  const [hovCall, setHovCall] = useState(false);
+  const [hovText, setHovText] = useState(false);
+  const base = {
+    display: 'inline-flex', alignItems: 'center',
+    fontFamily: fonts.sans, fontWeight: 700,
+    letterSpacing: '0.02em', cursor: 'pointer',
+    textDecoration: 'none', transition: 'all 0.15s ease',
+    fontSize: small ? 13 : 15,
+    padding: small ? '10px 18px' : '15px 28px',
+    border: 'none',
+  };
+  return (
+    <div style={{ display: 'inline-flex', borderRadius: 6, overflow: 'hidden', boxShadow: '0 4px 20px rgba(201,162,39,0.2)' }}>
+      <a href={`tel:${BIZ.phonePlain}`} style={{
+        ...base,
+        background: hovCall ? C.goldLight : C.gold,
+        color: C.black,
+        borderRight: `1px solid rgba(0,0,0,0.2)`,
+      }}
+      onMouseEnter={() => setHovCall(true)}
+      onMouseLeave={() => setHovCall(false)}
+      >
+        Call {BIZ.phone}
+      </a>
+      <a href={`sms:${BIZ.phonePlain}`} style={{
+        ...base,
+        background: hovText ? C.goldDark : 'rgba(201,162,39,0.15)',
+        color: hovText ? C.black : C.gold,
+        border: `1px solid ${C.goldBorder}`,
+        borderLeft: 'none',
+      }}
+      onMouseEnter={() => setHovText(true)}
+      onMouseLeave={() => setHovText(false)}
+      >
+        Send a Text
+      </a>
+    </div>
+  );
+}
+
+function Stars({ n = 5 }) {
+  return (
+    <span style={{ color: C.gold, fontSize: 16, letterSpacing: 3 }}>
+      {'★'.repeat(n)}
+    </span>
+  );
+}
+
+function GoldDivider() {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '0 auto 28px', width: 'fit-content' }}>
+      <div style={{ width: 40, height: 1, background: `linear-gradient(to right, transparent, ${C.gold})` }} />
+      <div style={{ width: 7, height: 7, background: C.gold, transform: 'rotate(45deg)' }} />
+      <div style={{ width: 40, height: 1, background: `linear-gradient(to left, transparent, ${C.gold})` }} />
+    </div>
+  );
+}
+
+function SectionLabel({ children, dark }) {
+  return (
+    <div style={{
+      display: 'inline-flex', alignItems: 'center',
+      background: dark ? 'rgba(201,162,39,0.08)' : 'rgba(201,162,39,0.12)',
+      border: `1px solid rgba(201,162,39,0.25)`,
+      borderRadius: 4, padding: '6px 14px', marginBottom: 20,
+    }}>
+      <span style={{ fontFamily: fonts.sans, fontSize: 11, fontWeight: 700, color: C.gold, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+        {children}
+      </span>
+    </div>
+  );
+}
+
+function PhotoBlock({ height = 400, label = 'Photo', radius = 12, light = false }) {
+  return (
+    <div style={{
+      width: '100%', height,
+      background: light
+        ? 'linear-gradient(135deg, #DDD0B8, #C9B890)'
+        : `linear-gradient(135deg, ${C.charcoalLt}, ${C.charcoalMid})`,
+      borderRadius: radius,
+      display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center', gap: 8,
+      border: light ? '2px dashed #C0AE88' : `2px dashed ${C.goldBorder}`,
+    }}>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={light ? '#8A7A5A' : C.goldBorder} strokeWidth="1.5">
+        <rect x="3" y="5" width="18" height="14" rx="2"/>
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M8.5 5l1-2h5l1 2"/>
+      </svg>
+      <span style={{ fontFamily: fonts.sans, fontSize: 12, fontWeight: 500, color: light ? '#8A7A5A' : C.textMuted, letterSpacing: '0.05em' }}>
+        {label}
+      </span>
+    </div>
+  );
+}
+
+// ============ NAVBAR ============
+
+function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', fn);
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+
+  return (
+    <nav style={{
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
+      background: scrolled ? 'rgba(13,13,13,0.96)' : 'transparent',
+      borderBottom: scrolled ? `1px solid ${C.borderDark}` : 'none',
+      backdropFilter: scrolled ? 'blur(16px)' : 'none',
+      transition: 'all 0.3s ease',
+    }}>
+      <div style={{
+        maxWidth: 1200, margin: '0 auto', padding: '0 28px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 70,
+      }}>
+        {/* Logo mark */}
+        <a href="#" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <img
+            src="logo.jpg"
+            alt="John Hill Handyman"
+            style={{ width: 44, height: 44, borderRadius: 8, objectFit: 'cover', boxShadow: `0 2px 12px rgba(201,162,39,0.25)` }}
+          />
+          <div>
+            <div style={{ fontFamily: fonts.sans, fontSize: 16, fontWeight: 800, color: C.white, letterSpacing: '-0.02em', lineHeight: 1 }}>John Hill</div>
+            <div style={{ fontFamily: fonts.sans, fontSize: 9, fontWeight: 700, color: C.gold, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Handyman Service</div>
+          </div>
+        </a>
+
+        {/* Nav links + CTA */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 36 }}>
+          {['Services', 'How It Works', 'Reviews', 'Contact'].map(l => (
+            <a key={l} href={`#${l.toLowerCase().replace(/ /g, '-')}`} style={{
+              fontFamily: fonts.sans, fontSize: 14, fontWeight: 500,
+              color: C.textMuted, textDecoration: 'none', transition: 'color 0.15s',
+            }}
+            onMouseEnter={e => e.target.style.color = C.gold}
+            onMouseLeave={e => e.target.style.color = C.textMuted}
+            >
+              {l}
+            </a>
+          ))}
+          <PhoneTextBtn small />
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+// ============ HERO ============
+
+function Hero() {
+  return (
+    <section style={{
+      minHeight: '100vh',
+      position: 'relative',
+      overflow: 'hidden',
+      backgroundImage: `url(${PHOTOS}hero.jpg)`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      display: 'flex',
+      alignItems: 'center',
+    }}>
+      {/* Gradient overlay — dark left, fades right to show harbor */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(to right, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.72) 40%, rgba(0,0,0,0.25) 75%, rgba(0,0,0,0.1) 100%)',
+      }} />
+      {/* Bottom vignette for stats legibility */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0, height: 200,
+        background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)',
+      }} />
+
+      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 1200, margin: '0 auto', padding: '110px 28px 80px' }}>
+        <div style={{ maxWidth: 640 }}>
+          <SectionLabel>Brunswick, ME</SectionLabel>
+
+          <h1 style={{
+            fontFamily: fonts.sans,
+            fontSize: 'clamp(40px, 5.5vw, 72px)',
+            fontWeight: 900, lineHeight: 1.05, letterSpacing: '-0.04em',
+            color: C.white, marginBottom: 24,
+          }}>
+            Brunswick's<br />
+            <span style={{
+              background: `linear-gradient(90deg, ${C.gold}, ${C.goldLight})`,
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            }}>
+              Trusted Handyman
+            </span>
+          </h1>
+
+          {/* Tagline */}
+          <div style={{
+            display: 'inline-flex', alignItems: 'center',
+            border: `1px solid ${C.goldBorder}`,
+            borderRadius: 4, padding: '8px 18px', marginBottom: 28,
+            background: 'rgba(0,0,0,0.3)',
+            backdropFilter: 'blur(4px)',
+          }}>
+            <span style={{ fontFamily: fonts.sans, fontSize: 15, color: C.gold, fontStyle: 'italic', fontWeight: 500 }}>
+              {BIZ.tagline}
+            </span>
+          </div>
+
+          <p style={{
+            fontFamily: fonts.sans, fontSize: 18, color: 'rgba(255,255,255,0.82)',
+            lineHeight: 1.75, marginBottom: 44, maxWidth: 500,
+          }}>
+            Roofing, decks, painting, junk removal, moving, cleanouts, and general repairs — done professionally and at fair prices.
+          </p>
+
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 64 }}>
+            <PhoneTextBtn />
+            <GoldBtn href="#services" outline>See Our Services</GoldBtn>
+          </div>
+
+          {/* Stats */}
+          <div style={{ display: 'flex', borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: 36 }}>
+            {BIZ.stats.map((s, i) => (
+              <div key={i} style={{
+                flex: 1,
+                borderLeft: i > 0 ? '1px solid rgba(255,255,255,0.15)' : 'none',
+                paddingLeft: i > 0 ? 36 : 0,
+              }}>
+                <div style={{ fontFamily: fonts.sans, fontSize: 34, fontWeight: 900, color: C.gold, letterSpacing: '-0.04em', lineHeight: 1 }}>
+                  {s.value}
+                </div>
+                <div style={{ fontFamily: fonts.sans, fontSize: 13, color: 'rgba(255,255,255,0.55)', marginTop: 6 }}>
+                  {s.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============ SERVICE TICKER ============
+
+function ServiceTicker() {
+  const items = ['Roofing', 'Junk Removal', 'Moving', 'Repairs', 'Cleanouts', 'Decks', 'Painting', 'Carpentry'];
+  const repeated = [...items, ...items, ...items];
+  return (
+    <div style={{ background: C.gold, padding: '14px 0', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', animation: 'ticker 22s linear infinite', width: 'max-content' }}>
+        {repeated.map((item, i) => (
+          <span key={i} style={{
+            fontFamily: fonts.sans, fontSize: 12, fontWeight: 800, color: C.black,
+            letterSpacing: '0.12em', textTransform: 'uppercase',
+            padding: '0 28px', whiteSpace: 'nowrap',
+            borderRight: '1px solid rgba(0,0,0,0.15)',
+          }}>
+            {item}
+          </span>
+        ))}
+      </div>
+      <style>{`@keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-33.333%); } }`}</style>
+    </div>
+  );
+}
+
+// ============ ABOUT ============
+
+function About() {
+  return (
+    <section style={{ background: C.cream, padding: '100px 28px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 80 }}>
+        {/* Photo */}
+        <div style={{ flex: '0 0 460px', maxWidth: 460 }}>
+          <img
+            src={PHOTOS + 'john-about.jpg'}
+            alt="John Hill on the job"
+            style={{ width: '100%', height: 500, objectFit: 'cover', objectPosition: 'top center', borderRadius: 16, display: 'block' }}
+          />
+        </div>
+
+        {/* Copy */}
+        <div style={{ flex: 1 }}>
+          <SectionLabel>About</SectionLabel>
+          <h2 style={{
+            fontFamily: fonts.sans,
+            fontSize: 'clamp(28px, 3.5vw, 48px)',
+            fontWeight: 900, color: C.textDark,
+            letterSpacing: '-0.04em', lineHeight: 1.1, marginBottom: 24,
+          }}>
+            Your Local One-Stop<br />Handyman in Brunswick
+          </h2>
+          <GoldDivider />
+          <p style={{
+            fontFamily: fonts.sans, fontSize: 17, color: C.textMid,
+            lineHeight: 1.8, marginBottom: 40,
+          }}>
+            {BIZ.about}
+          </p>
+
+          {/* Trust badges — no emojis, gold checkmark */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 36 }}>
+            {BIZ.badges.map((b, i) => (
+              <div key={i} style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                background: C.white, border: `1px solid ${C.borderLight}`,
+                borderRadius: 8, padding: '14px 20px',
+              }}>
+                <div style={{
+                  width: 22, height: 22, borderRadius: '50%',
+                  background: `linear-gradient(135deg, ${C.goldDark}, ${C.gold})`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                }}>
+                  <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+                    <path d="M1 4L4 7.5L10 1" stroke="#0D0D0D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <span style={{ fontFamily: fonts.sans, fontSize: 15, fontWeight: 600, color: C.textDark }}>{b.label}</span>
+              </div>
+            ))}
+          </div>
+
+          <PhoneTextBtn />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============ SERVICES ============
+
+function Services() {
+  return (
+    <section id="services" style={{ background: C.charcoal, padding: '100px 28px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 72 }}>
+          <SectionLabel>What We Do</SectionLabel>
+          <h2 style={{
+            fontFamily: fonts.sans, fontSize: 'clamp(28px, 3.5vw, 48px)',
+            fontWeight: 900, color: C.white, letterSpacing: '-0.04em', marginBottom: 16,
+          }}>
+            Our Services
+          </h2>
+          <GoldDivider />
+          <p style={{
+            fontFamily: fonts.sans, fontSize: 17, color: C.textMuted,
+            maxWidth: 500, margin: '0 auto', lineHeight: 1.7,
+          }}>
+            From roofing repairs to junk removal, we handle what needs handling — professionally and at fair prices.
+          </p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+          {SERVICES.map((s, i) => (
+            <div key={i} style={{
+              background: C.charcoalMid, border: `1px solid ${C.borderDark}`,
+              borderRadius: 12, overflow: 'hidden', transition: 'border-color 0.2s, transform 0.2s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = C.gold; e.currentTarget.style.transform = 'translateY(-4px)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = C.borderDark; e.currentTarget.style.transform = 'translateY(0)'; }}
+            >
+              {/* Service photo */}
+              <div style={{ height: 180, overflow: 'hidden' }}>
+                <img src={s.photo} alt={s.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.4s ease' }}
+                  onMouseEnter={e => e.target.style.transform = 'scale(1.05)'}
+                  onMouseLeave={e => e.target.style.transform = 'scale(1)'}
+                />
+              </div>
+              <div style={{ padding: '22px 24px 28px' }}>
+                <h3 style={{ fontFamily: fonts.sans, fontSize: 18, fontWeight: 700, color: C.white, marginBottom: 8 }}>
+                  {s.name}
+                </h3>
+                <p style={{ fontFamily: fonts.sans, fontSize: 14, color: C.textMuted, lineHeight: 1.65 }}>
+                  {s.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ textAlign: 'center', marginTop: 52 }}>
+          <GoldBtn href="#contact">Not sure if we cover it? Get in touch</GoldBtn>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============ HOW IT WORKS ============
+
+function HowItWorks() {
+  return (
+    <section id="how-it-works" style={{ background: C.black, padding: '100px 28px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 72 }}>
+          <SectionLabel>Simple Process</SectionLabel>
+          <h2 style={{
+            fontFamily: fonts.sans, fontSize: 'clamp(28px, 3.5vw, 48px)',
+            fontWeight: 900, color: C.white, letterSpacing: '-0.04em', marginBottom: 16,
+          }}>
+            How It Works
+          </h2>
+          <GoldDivider />
+          <p style={{
+            fontFamily: fonts.sans, fontSize: 17, color: C.textMuted,
+            maxWidth: 440, margin: '0 auto', lineHeight: 1.7,
+          }}>
+            Getting your home fixed is straightforward. Here's what to expect.
+          </p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32 }}>
+          {HOW_IT_WORKS.map((step, i) => (
+            <div key={i} style={{
+              background: C.charcoalMid, border: `1px solid ${C.borderDark}`,
+              borderRadius: 16, padding: '44px 36px', textAlign: 'center', position: 'relative',
+            }}>
+              {/* Step number */}
+              <div style={{
+                width: 60, height: 60,
+                background: `linear-gradient(135deg, ${C.goldDark}, ${C.gold})`,
+                borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                margin: '0 auto 28px',
+                fontFamily: fonts.sans, fontSize: 20, fontWeight: 900, color: C.black,
+                boxShadow: `0 4px 20px rgba(201,162,39,0.3)`,
+              }}>
+                {step.step}
+              </div>
+              <h3 style={{
+                fontFamily: fonts.sans, fontSize: 20, fontWeight: 700,
+                color: C.white, marginBottom: 14,
+              }}>
+                {step.title}
+              </h3>
+              <p style={{ fontFamily: fonts.sans, fontSize: 15, color: C.textMuted, lineHeight: 1.7 }}>
+                {step.desc}
+              </p>
+              {/* Arrow connector */}
+              {i < HOW_IT_WORKS.length - 1 && (
+                <div style={{
+                  position: 'absolute', right: -20, top: '50%', transform: 'translateY(-50%)',
+                  color: C.gold, fontSize: 22, fontWeight: 700, zIndex: 2,
+                }}>→</div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============ TESTIMONIALS ============
+
+function Testimonials() {
+  return (
+    <section id="reviews" style={{ background: C.cream, padding: '100px 28px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 64 }}>
+          <SectionLabel>Customer Reviews</SectionLabel>
+          <h2 style={{
+            fontFamily: fonts.sans, fontSize: 'clamp(28px, 3.5vw, 48px)',
+            fontWeight: 900, color: C.textDark, letterSpacing: '-0.04em', marginBottom: 16,
+          }}>
+            What Our Customers Say
+          </h2>
+          <GoldDivider />
+          <p style={{
+            fontFamily: fonts.sans, fontSize: 17, color: C.textMid,
+            maxWidth: 480, margin: '0 auto', lineHeight: 1.7,
+          }}>
+            Customer satisfaction is our priority — every time, every job.
+          </p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+          {TESTIMONIALS.map((t, i) => (
+            <div key={i} style={{
+              background: C.white, border: `1px solid ${C.borderLight}`,
+              borderRadius: 16, padding: '36px 28px',
+              display: 'flex', flexDirection: 'column', gap: 20,
+              boxShadow: '0 2px 16px rgba(0,0,0,0.05)',
+            }}>
+              <Stars n={5} />
+              <p style={{
+                fontFamily: fonts.sans, fontSize: 15, color: C.textMid,
+                lineHeight: 1.75, fontStyle: 'italic', flex: 1,
+              }}>
+                "{t.quote}"
+              </p>
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 12,
+                borderTop: `1px solid ${C.borderLight}`, paddingTop: 18,
+              }}>
+                <div style={{
+                  width: 44, height: 44, flexShrink: 0,
+                  background: `linear-gradient(135deg, ${C.goldDark}, ${C.gold})`,
+                  borderRadius: '50%',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontFamily: fonts.sans, fontWeight: 800, fontSize: 17, color: C.black,
+                }}>
+                  {t.author[0]}
+                </div>
+                <div>
+                  <div style={{ fontFamily: fonts.sans, fontSize: 14, fontWeight: 700, color: C.textDark }}>{t.author}</div>
+                  <div style={{ fontFamily: fonts.sans, fontSize: 12, color: '#8A7A5A' }}>{t.location}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============ CTA BANNER ============
+
+function CTABanner() {
+  return (
+    <section style={{ background: C.black, padding: '80px 28px', position: 'relative', overflow: 'hidden' }}>
+      <div style={{
+        position: 'absolute', left: -100, top: '50%', transform: 'translateY(-50%)',
+        width: 400, height: 400,
+        background: `radial-gradient(circle, rgba(201,162,39,0.12) 0%, transparent 70%)`,
+        pointerEvents: 'none',
+      }} />
+      <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 80, position: 'relative', zIndex: 1 }}>
+        <div style={{ flex: 1 }}>
+          <h2 style={{
+            fontFamily: fonts.sans, fontSize: 'clamp(32px, 4vw, 56px)',
+            fontWeight: 900, color: C.white, letterSpacing: '-0.04em', lineHeight: 1.1, marginBottom: 20,
+          }}>
+            Ready to Get It Fixed?
+          </h2>
+          <p style={{
+            fontFamily: fonts.sans, fontSize: 18, color: C.textMuted,
+            lineHeight: 1.7, marginBottom: 36, maxWidth: 480,
+          }}>
+            Your reliable Brunswick handyman is one call or text away. Reach out and we'll get back to you fast.
+          </p>
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+            <PhoneTextBtn />
+            <GoldBtn href={BIZ.facebook} outline>Message on Facebook</GoldBtn>
+          </div>
+        </div>
+        <div style={{ flex: '0 0 340px', maxWidth: 340 }}>
+          <img
+            src={PHOTOS + 'john-about.jpg'}
+            alt="John Hill"
+            style={{ width: '100%', height: 360, objectFit: 'cover', objectPosition: 'top center', borderRadius: 14, display: 'block' }}
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============ CONTACT FORM ============
+
+function Contact() {
+  const [form, setForm] = useState({ name: '', email: '', phone: '', service: '', message: '' });
+  const [submitted, setSubmitted] = useState(false);
+
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const body = [
+      `Name: ${form.name}`,
+      `Email: ${form.email}`,
+      `Phone: ${form.phone}`,
+      `Service Needed: ${form.service}`,
+      `Message: ${form.message}`,
+    ].join('\n');
+    window.location.href = `mailto:${BIZ.email}?subject=Service Request from ${encodeURIComponent(form.name)}&body=${encodeURIComponent(body)}`;
+    setSubmitted(true);
+  };
+
+  const inputStyle = {
+    width: '100%',
+    background: '#F2EDE4',
+    border: '1.5px solid #DDD0B8',
+    borderRadius: 8,
+    padding: '14px 16px',
+    fontFamily: fonts.sans,
+    fontSize: 15,
+    color: C.textDark,
+    outline: 'none',
+    transition: 'border-color 0.15s',
+  };
+
+  const labelStyle = {
+    fontFamily: fonts.sans,
+    fontSize: 13,
+    fontWeight: 600,
+    color: '#5A4E3E',
+    marginBottom: 8,
+    display: 'block',
+    letterSpacing: '0.02em',
+  };
+
+  return (
+    <section id="contact" style={{ background: C.charcoalMid, padding: '100px 28px' }}>
+      {/* Header */}
+      <div style={{ textAlign: 'center', marginBottom: 56 }}>
+        <h2 style={{
+          fontFamily: fonts.sans, fontSize: 'clamp(36px, 4.5vw, 60px)',
+          fontWeight: 900, color: C.white, letterSpacing: '-0.04em', marginBottom: 16,
+        }}>
+          Contact Us
+        </h2>
+        <p style={{
+          fontFamily: fonts.sans, fontSize: 17, color: C.textMuted,
+          maxWidth: 480, margin: '0 auto', lineHeight: 1.7,
+        }}>
+          Have a question or need a quote? Fill out the form below or reach out directly — we're here to help.
+        </p>
+      </div>
+
+      {/* Form card */}
+      <div style={{
+        maxWidth: 760, margin: '0 auto',
+        background: C.cream,
+        borderRadius: 20,
+        padding: '52px 52px',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.35)',
+      }}>
+        {submitted ? (
+          <div style={{ textAlign: 'center', padding: '40px 0' }}>
+            <div style={{
+              width: 60, height: 60, margin: '0 auto 20px',
+              background: `linear-gradient(135deg, ${C.goldDark}, ${C.gold})`,
+              borderRadius: '50%',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <svg width="24" height="20" viewBox="0 0 24 20" fill="none">
+                <path d="M2 10L9 17L22 2" stroke="#0D0D0D" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h3 style={{ fontFamily: fonts.sans, fontSize: 24, fontWeight: 800, color: C.textDark, marginBottom: 10 }}>
+              Message Sent!
+            </h3>
+            <p style={{ fontFamily: fonts.sans, fontSize: 16, color: C.textMid, lineHeight: 1.6 }}>
+              Your email client should have opened with your message. John will be in touch shortly.
+            </p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            {/* Full Name */}
+            <div style={{ marginBottom: 24 }}>
+              <label style={labelStyle}>Full Name</label>
+              <input
+                type="text"
+                placeholder="Jane Smith"
+                required
+                value={form.name}
+                onChange={e => set('name', e.target.value)}
+                style={inputStyle}
+                onFocus={e => e.target.style.borderColor = C.goldDark}
+                onBlur={e => e.target.style.borderColor = '#DDD0B8'}
+              />
+            </div>
+
+            {/* Email + Phone row */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 24 }}>
+              <div>
+                <label style={labelStyle}>Email Address</label>
+                <input
+                  type="email"
+                  placeholder="you@example.com"
+                  required
+                  value={form.email}
+                  onChange={e => set('email', e.target.value)}
+                  style={inputStyle}
+                  onFocus={e => e.target.style.borderColor = C.goldDark}
+                  onBlur={e => e.target.style.borderColor = '#DDD0B8'}
+                />
+              </div>
+              <div>
+                <label style={labelStyle}>Phone</label>
+                <input
+                  type="tel"
+                  placeholder="+1 (207) 000-0000"
+                  value={form.phone}
+                  onChange={e => set('phone', e.target.value)}
+                  style={inputStyle}
+                  onFocus={e => e.target.style.borderColor = C.goldDark}
+                  onBlur={e => e.target.style.borderColor = '#DDD0B8'}
+                />
+              </div>
+            </div>
+
+            {/* Service dropdown */}
+            <div style={{ marginBottom: 24 }}>
+              <label style={labelStyle}>Required Service</label>
+              <div style={{ position: 'relative' }}>
+                <select
+                  value={form.service}
+                  onChange={e => set('service', e.target.value)}
+                  style={{
+                    ...inputStyle,
+                    appearance: 'none',
+                    WebkitAppearance: 'none',
+                    cursor: 'pointer',
+                    paddingRight: 44,
+                  }}
+                  onFocus={e => e.target.style.borderColor = C.goldDark}
+                  onBlur={e => e.target.style.borderColor = '#DDD0B8'}
+                >
+                  <option value="">Select your required service</option>
+                  {SERVICES.filter(s => s.name !== 'And More').map(s => (
+                    <option key={s.name} value={s.name}>{s.name}</option>
+                  ))}
+                  <option value="Other">Other / Not sure yet</option>
+                </select>
+                {/* Custom chevron */}
+                <div style={{
+                  position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)',
+                  pointerEvents: 'none',
+                }}>
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="none">
+                    <path d="M1 1L8 8L15 1" stroke="#6B5C45" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Message */}
+            <div style={{ marginBottom: 32 }}>
+              <label style={labelStyle}>Message <span style={{ fontWeight: 400, color: '#8A7A5A' }}>(optional)</span></label>
+              <textarea
+                rows={4}
+                placeholder="Tell us a bit more about the job..."
+                value={form.message}
+                onChange={e => set('message', e.target.value)}
+                style={{ ...inputStyle, resize: 'vertical', lineHeight: 1.6 }}
+                onFocus={e => e.target.style.borderColor = C.goldDark}
+                onBlur={e => e.target.style.borderColor = '#DDD0B8'}
+              />
+            </div>
+
+            {/* Submit */}
+            <button type="submit" style={{
+              width: '100%',
+              background: `linear-gradient(90deg, ${C.goldDark}, ${C.gold})`,
+              border: 'none',
+              borderRadius: 8,
+              padding: '16px',
+              fontFamily: fonts.sans,
+              fontSize: 16,
+              fontWeight: 700,
+              color: C.black,
+              cursor: 'pointer',
+              letterSpacing: '0.02em',
+              boxShadow: `0 4px 20px rgba(201,162,39,0.3)`,
+              transition: 'opacity 0.15s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
+            onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+            >
+              Get in Touch
+            </button>
+
+            {/* Or divider + direct contact */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, margin: '28px 0 24px' }}>
+              <div style={{ flex: 1, height: 1, background: C.borderLight }} />
+              <span style={{ fontFamily: fonts.sans, fontSize: 13, color: '#8A7A5A', fontWeight: 500 }}>or reach out directly</span>
+              <div style={{ flex: 1, height: 1, background: C.borderLight }} />
+            </div>
+
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+              <PhoneTextBtn small />
+              <a href={`mailto:${BIZ.email}`} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                padding: '10px 22px', borderRadius: 6,
+                border: `1.5px solid ${C.borderLight}`,
+                background: 'transparent',
+                fontFamily: fonts.sans, fontSize: 13, fontWeight: 600,
+                color: C.textMid, textDecoration: 'none', transition: 'border-color 0.15s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = C.goldDark}
+              onMouseLeave={e => e.currentTarget.style.borderColor = C.borderLight}
+              >
+                {BIZ.email}
+              </a>
+            </div>
+          </form>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ============ FOOTER ============
+
+function Footer() {
+  const year = new Date().getFullYear();
+  return (
+    <footer style={{ background: C.black, padding: '60px 28px 32px', borderTop: `1px solid ${C.borderDark}` }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 56, marginBottom: 48 }}>
+
+          {/* Brand */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+              <img
+                src="logo.jpg"
+                alt="John Hill Handyman"
+                style={{ width: 44, height: 44, borderRadius: 10, objectFit: 'cover' }}
+              />
+              <div>
+                <div style={{ fontFamily: fonts.sans, fontSize: 18, fontWeight: 800, color: C.white, letterSpacing: '-0.02em', lineHeight: 1 }}>John Hill</div>
+                <div style={{ fontFamily: fonts.sans, fontSize: 10, fontWeight: 700, color: C.gold, letterSpacing: '0.14em', textTransform: 'uppercase' }}>Handyman Service</div>
+              </div>
+            </div>
+            <p style={{ fontFamily: fonts.sans, fontSize: 14, color: C.textMuted, lineHeight: 1.75, maxWidth: 280 }}>
+              Brunswick's trusted handyman for home repairs, improvements, and maintenance. No job too small.
+            </p>
+            <div style={{ marginTop: 16, fontFamily: fonts.sans, fontSize: 14, fontStyle: 'italic', color: C.gold, opacity: 0.75 }}>
+              {BIZ.tagline}
+            </div>
+          </div>
+
+          {/* Services */}
+          <div>
+            <div style={{ fontFamily: fonts.sans, fontSize: 11, fontWeight: 700, color: C.gold, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 20 }}>
+              Services
+            </div>
+            {SERVICES.slice(0, 7).map(s => (
+              <div key={s.name} style={{ fontFamily: fonts.sans, fontSize: 13, color: C.textMuted, marginBottom: 10 }}>
+                {s.name}
+              </div>
+            ))}
+          </div>
+
+          {/* Contact */}
+          <div>
+            <div style={{ fontFamily: fonts.sans, fontSize: 11, fontWeight: 700, color: C.gold, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 20 }}>
+              Contact
+            </div>
+            {[
+              { label: 'Phone', val: BIZ.phone,    href: `tel:${BIZ.phonePlain}` },
+              { label: 'Text',  val: 'Send a text', href: `sms:${BIZ.phonePlain}` },
+              { label: 'Email', val: BIZ.email,     href: `mailto:${BIZ.email}`    },
+              { label: 'Area',  val: BIZ.location,  href: '#'                       },
+            ].map((c, i) => (
+              <a key={i} href={c.href} style={{
+                display: 'block',
+                fontFamily: fonts.sans, fontSize: 13, color: C.textMuted,
+                textDecoration: 'none', marginBottom: 12, transition: 'color 0.15s',
+              }}
+              onMouseEnter={e => e.target.style.color = C.gold}
+              onMouseLeave={e => e.target.style.color = C.textMuted}
+              >
+                <span style={{ color: C.gold, fontWeight: 600, marginRight: 8 }}>{c.label}</span>
+                {c.val}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div style={{
+          borderTop: `1px solid ${C.borderDark}`, paddingTop: 24,
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        }}>
+          <span style={{ fontFamily: fonts.sans, fontSize: 13, color: 'rgba(245,240,232,0.25)' }}>
+            © {year} John Hill Handyman Service · Brunswick, ME
+          </span>
+          <a href={BIZ.facebook} target="_blank" rel="noopener noreferrer"
+            style={{ fontFamily: fonts.sans, fontSize: 13, color: C.textMuted, textDecoration: 'none', transition: 'color 0.15s' }}
+            onMouseEnter={e => e.target.style.color = C.gold}
+            onMouseLeave={e => e.target.style.color = C.textMuted}
+          >
+            Facebook
+          </a>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+// ============ APP ============
+
+function App() {
+  return (
+    <div>
+      <Navbar />
+      <Hero />
+      <ServiceTicker />
+      <About />
+      <Services />
+      <HowItWorks />
+      <Testimonials />
+      <CTABanner />
+      <Contact />
+      <Footer />
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+
+</script>
+</body>
+</html>
