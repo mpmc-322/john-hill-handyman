@@ -319,7 +319,8 @@ function Hero() {
       }} />
 
       <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 1200, margin: '0 auto', padding: '110px 28px 80px' }}>
-        <div style={{ maxWidth: 640 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 48 }}>
+        <div style={{ flex: '1 1 0', minWidth: 0 }}>
           <SectionLabel>Brunswick, ME</SectionLabel>
 
           <h1 style={{
@@ -379,6 +380,21 @@ function Hero() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Hero logo badge */}
+        <div style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img
+            src="logo-badge.png"
+            alt="John Hill Handyman Service"
+            style={{
+              width: 'clamp(240px, 26vw, 380px)',
+              height: 'auto',
+              filter: 'drop-shadow(0 8px 32px rgba(0,0,0,0.85)) drop-shadow(0 2px 8px rgba(0,0,0,0.6))',
+            }}
+          />
+        </div>
+
         </div>
       </div>
     </section>
